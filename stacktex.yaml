@@ -1,0 +1,5 @@
+# Controlled vocabulary. Every domain, applies_to.languages and applies_to.platforms value
+# in the corpus must appear here. See the stacktex contract, schemas/corpus-config.json.
+domains: [architecture, messaging, observability, security, api, dependencies, data, delivery]
+languages: [go, python, typescript]
+platforms: [kubernetes, docker, terraform, aws]
