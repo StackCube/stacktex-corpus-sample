@@ -1,0 +1,16 @@
+name: check
+on:
+  push: { branches: [main] }
+  pull_request:
+permissions: { contents: read }
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.17
+      - run: bun install --frozen-lockfile
+      # The contract schema test skips here (the contract repo is private); `stacktex lint` replaces it in M1.
+      - run: bun test eval

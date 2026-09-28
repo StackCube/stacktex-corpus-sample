@@ -1,0 +1,70 @@
+# Retrieval evaluation. Each question has one correct answer set.
+#   expected_ids:   ordered by importance; the first is the primary answer
+#   forbidden_ids:  must never appear in results (superseded, draft, deprecated or wrong-scope)
+#   max_find_calls: how many `stacktex find` calls an agent may need
+- id: q01-go-kafka-consumer
+  q: which kafka client library should a go service use to consume events
+  scope: { languages: [go] }
+  expected_ids: [adr-0007-go-kafka-client-franz-go]
+  forbidden_ids: [adr-0001-go-kafka-client-sarama, adr-0004-go-kafka-client-confluent, adr-0005-python-kafka-client]
+  max_find_calls: 1
+- id: q02-python-kafka-producer
+  q: kafka client for producing events from python
+  scope: { languages: [python] }
+  expected_ids: [adr-0005-python-kafka-client]
+  forbidden_ids: [adr-0007-go-kafka-client-franz-go, adr-0004-go-kafka-client-confluent, adr-0001-go-kafka-client-sarama]
+  max_find_calls: 1
+- id: q03-go-consumer-failure-logging
+  q: how should a go kafka consumer log a message it failed to process
+  scope: { languages: [go] }
+  expected_ids: [adr-0007-go-kafka-client-franz-go, std-structured-logging]
+  forbidden_ids: [adr-0008-otel-logs, adr-0004-go-kafka-client-confluent, adr-0001-go-kafka-client-sarama]
+  max_find_calls: 2
+- id: q04-pubsub-synonym
+  q: which pub/sub system do we standardise on for asynchronous communication between services
+  scope: {}
+  expected_ids: [adr-0002-event-backbone-kafka]
+  forbidden_ids: []
+  max_find_calls: 1
+- id: q05-database-password
+  q: where should a service read its database password from
+  scope: {}
+  expected_ids: [pol-secrets-handling]
+  forbidden_ids: []
+  max_find_calls: 1
+- id: q06-log-customer-email
+  q: can I log a customer's email address when a request fails
+  scope: {}
+  expected_ids: [pol-pii-in-logs, std-structured-logging]
+  forbidden_ids: [adr-0008-otel-logs]
+  max_find_calls: 2
+- id: q07-service-to-service-auth
+  q: how should one service authenticate its calls to another service
+  scope: { platforms: [kubernetes] }
+  expected_ids: [adr-0003-service-auth-mtls]
+  forbidden_ids: [adr-0006-kong-api-gateway]
+  max_find_calls: 1
+- id: q08-breaking-api-change
+  q: how do I ship a breaking change to a public http api
+  scope: {}
+  expected_ids: [std-api-versioning]
+  forbidden_ids: [adr-0006-kong-api-gateway]
+  max_find_calls: 1
+- id: q09-new-go-service
+  q: how do I start a new go service and lay out its packages
+  scope: { languages: [go] }
+  expected_ids: [tpl-go-service, std-go-service-layout]
+  forbidden_ids: []
+  max_find_calls: 2
+- id: q10-agpl-dependency
+  q: is it ok to add an AGPL licensed dependency
+  scope: {}
+  expected_ids: [pol-dependency-licences]
+  forbidden_ids: []
+  max_find_calls: 1
+- id: q11-typescript-lint-config
+  q: which eslint and tsconfig settings should this project use
+  scope: { languages: [typescript], path: web/src/app.tsx }
+  expected_ids: [std-typescript-lint]
+  forbidden_ids: []
+  max_find_calls: 1

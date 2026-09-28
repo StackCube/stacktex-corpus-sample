@@ -1,0 +1,12 @@
+{
+  "name": "stacktex-corpus-sample",
+  "private": true,
+  "type": "module",
+  "scripts": { "check": "bun test eval" },
+  "devDependencies": {
+    "@types/bun": "^1.4.2",
+    "ajv": "^8",
+    "ajv-formats": "^3",
+    "yaml": "^2"
+  }
+}
