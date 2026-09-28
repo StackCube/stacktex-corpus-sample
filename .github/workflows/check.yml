@@ -12,5 +12,5 @@ jobs:
         with:
           bun-version: 1.2.17
       - run: bun install --frozen-lockfile
-      # The contract schema test skips here (the contract repo is private); `stacktex lint` replaces it in M1.
+      # Corpus rules are checked by stacktex-cli's CI (stacktex lint); this checks the eval questions.
       - run: bun test eval

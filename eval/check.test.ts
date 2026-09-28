@@ -1,9 +1,7 @@
-// Consistency checks for the sample corpus and its eval questions.
-// Until the CLI exists (M1), this stands in for `stacktex lint`: it checks what the eval relies on.
+// Consistency checks for the sample corpus and its eval questions: what the retrieval eval relies on.
+// The corpus rules themselves are checked by `stacktex lint`, which stacktex-cli's CI runs against this repo.
 import { describe, expect, test } from "bun:test";
-import Ajv2020 from "ajv/dist/2020";
-import addFormats from "ajv-formats";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { parse } from "yaml";
 
@@ -36,7 +34,7 @@ const byId = new Map(docs.map((d) => [d.fm.id, d]));
 const vocab = parse(readFileSync(join(root, "stacktex.yaml"), "utf8"));
 const questions: Question[] = parse(readFileSync(join(root, "eval/questions.yaml"), "utf8"));
 
-// copy of stacktex-contract v0.1.0 test/ref/applies-to.ts; replaced by stacktex lint in M1
+// Same semantics as stacktex-contract test/ref/applies-to.ts; the M2 eval runner replaces this file's scope checks.
 const glob = (g: string) => {
   const segs = g.split("/");
   let re = "^";
@@ -61,20 +59,6 @@ describe("corpus", () => {
     expect(byId.size).toBe(20);
   });
 
-  test.each(docs.map((d) => [d.path, d] as const))("vocabulary: %s", (_p, d) => {
-    for (const x of d.fm.domain) expect(vocab.domains, `${d.path} domain ${x}`).toContain(x);
-    for (const x of d.fm.applies_to.languages ?? []) expect(vocab.languages, `${d.path} language ${x}`).toContain(x);
-    for (const x of d.fm.applies_to.platforms ?? []) expect(vocab.platforms, `${d.path} platform ${x}`).toContain(x);
-  });
-
-  test("supersession is symmetric and statuses agree", () => {
-    for (const d of docs) {
-      for (const s of d.fm.supersedes ?? []) expect(byId.get(s)?.fm.superseded_by ?? [], `${d.fm.id} supersedes ${s}`).toContain(d.fm.id);
-      for (const s of d.fm.superseded_by ?? []) expect(byId.get(s)?.fm.supersedes ?? [], `${d.fm.id} superseded_by ${s}`).toContain(d.fm.id);
-      expect(d.fm.status === "superseded", `${d.fm.id} status vs superseded_by`).toBe((d.fm.superseded_by ?? []).length > 0);
-    }
-  });
-
   test("the Go Kafka chain is three steps long and ends at franz-go", () => {
     expect(byId.get("adr-0001-go-kafka-client-sarama")!.fm.superseded_by).toEqual(["adr-0004-go-kafka-client-confluent"]);
     expect(byId.get("adr-0004-go-kafka-client-confluent")!.fm.superseded_by).toEqual(["adr-0007-go-kafka-client-franz-go"]);
@@ -91,14 +75,6 @@ describe("corpus", () => {
 
   test("no review_by falls before 2027-06-30", () => {
     for (const d of docs) expect(d.fm.review_by >= "2027-06-30", d.fm.id).toBe(true);
-  });
-
-  const schemaPath = join(root, "..", "contract", "schemas", "frontmatter.json");
-  test.skipIf(!existsSync(schemaPath))("every document is valid against the contract schema (needs ../contract)", () => {
-    const ajv = new Ajv2020({ strict: true, allErrors: true });
-    addFormats(ajv);
-    const validate = ajv.compile(JSON.parse(readFileSync(schemaPath, "utf8")));
-    for (const d of docs) expect(validate(d.fm), `${d.path}: ${JSON.stringify(validate.errors)}`).toBe(true);
   });
 });
 
