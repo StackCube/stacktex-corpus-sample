@@ -18,7 +18,7 @@ Tidewater's data platform runs several Python services that consume shipment and
 
 ## Decision
 
-Python services use `confluent-kafka-python` to produce and consume Kafka events. Like the Go client chosen in ADR-0004, it wraps librdkafka, giving it mature consumer-group support, cooperative-sticky rebalancing, and schema-registry integration through `confluent_kafka.schema_registry`. Each Python service runs exactly one consumer group per service, named `<service-name>` with no shared groups between services, so that scaling a service's replica count scales its consumption in step without another service's consumption being affected.
+Python services use `confluent-kafka-python` to produce and consume Kafka events. Like `confluent-kafka-go`, which Go services used under ADR-0004 (since superseded by ADR-0007), it wraps librdkafka, giving it mature consumer-group support, cooperative-sticky rebalancing, and schema-registry integration through `confluent_kafka.schema_registry`. Each Python service runs exactly one consumer group per service, named `<service-name>` with no shared groups between services, so that scaling a service's replica count scales its consumption in step without another service's consumption being affected.
 
 Offsets are committed manually after a record is fully processed, not on an automatic timer. A record that fails processing after three retries is published to the `<topic>.dlq` topic with the original partition and offset attached as headers, the same convention Go services follow under ADR-0007, so that DLQ tooling and on-call runbooks work the same way regardless of which language produced the failure.
 
