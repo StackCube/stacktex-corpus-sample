@@ -31,7 +31,6 @@ const docs: Doc[] = walk(root).flatMap((full) => {
   return m ? [{ path: relative(root, full), fm: parse(m[1]) as Fm, body: m[2] }] : [];
 });
 const byId = new Map(docs.map((d) => [d.fm.id, d]));
-const vocab = parse(readFileSync(join(root, "stacktex.yaml"), "utf8"));
 const questions: Question[] = parse(readFileSync(join(root, "eval/questions.yaml"), "utf8"));
 
 // Same semantics as stacktex-contract test/ref/applies-to.ts; the M2 eval runner replaces this file's scope checks.

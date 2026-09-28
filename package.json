@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-  "check": "bun test eval"
-},
-"devDependencies": {
-  "@types/bun": "^1.4.2",
-  "yaml": "^2"
-}
+    "check": "bun test eval"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.2",
+    "yaml": "^2"
+  }
 }
